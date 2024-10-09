@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Show Current Location on OpenStreetMap</title>
+    <title>Track Live Location on OpenStreetMap</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
@@ -12,34 +12,45 @@
     </style>
 </head>
 <body>
-    <h1>Your Current Location</h1>
+    <h1>Track Your Live Location</h1>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         // Initialize the map
         var map = L.map('map').setView([51.505, -0.09], 13); // Default to London
-        
+
         // Set up the OpenStreetMap layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        var marker;
+
         // Check if Geolocation is supported
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
+            // Use watchPosition to track the live location
+            navigator.geolocation.watchPosition(function(position) {
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
 
-                // Update the map view to the current location
+                // Update the map view to the new location
                 map.setView([lat, lon], 13);
 
-                // Add a marker at the current location
-                L.marker([lat, lon]).addTo(map)
-                    .bindPopup('You are here!')
-                    .openPopup();
+                // If marker already exists, update its position; otherwise, create it
+                if (marker) {
+                    marker.setLatLng([lat, lon]);
+                } else {
+                    marker = L.marker([lat, lon]).addTo(map)
+                        .bindPopup('You are here!')
+                        .openPopup();
+                }
             }, function(error) {
                 alert('Error occurred. Error code: ' + error.code);
+            }, {
+                enableHighAccuracy: true,  // Use GPS if available
+                maximumAge: 0,             // Do not use a cached position
+                timeout: 5000              // Timeout after 5 seconds
             });
         } else {
             alert('Geolocation is not supported by this browser.');

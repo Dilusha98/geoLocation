@@ -17,7 +17,7 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Initialize the map
+        // Initialize the map with default view
         var map = L.map('map').setView([51.505, -0.09], 13); // Default view to London
 
         // Set up the OpenStreetMap layer
@@ -26,6 +26,12 @@
         }).addTo(map);
 
         var marker;
+        var currentZoom = map.getZoom(); // Store the current zoom level
+
+        // Listen for manual zoom changes and update the currentZoom variable
+        map.on('zoomend', function() {
+            currentZoom = map.getZoom();  // Update zoom level when the user zooms
+        });
 
         // Check if Geolocation is supported
         if (navigator.geolocation) {
@@ -34,8 +40,8 @@
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
 
-                // Pan the map to the new location without changing the zoom level
-                map.panTo([lat, lon]);
+                // Update map position without resetting zoom level
+                map.setView([lat, lon], currentZoom); // Keep the zoom level
 
                 // If marker already exists, update its position; otherwise, create it
                 if (marker) {

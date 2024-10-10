@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         // Initialize the map
-        var map = L.map('map').setView([51.505, -0.09], 13); // Default to London
+        var map = L.map('map').setView([51.505, -0.09], 13); // Default view to London
 
         // Set up the OpenStreetMap layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -29,7 +29,7 @@
 
         // Check if Geolocation is supported
         if (navigator.geolocation) {
-            // Use watchPosition to track the live location
+            // Use watchPosition to continuously track the location
             navigator.geolocation.watchPosition(function(position) {
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
@@ -39,7 +39,7 @@
 
                 // If marker already exists, update its position; otherwise, create it
                 if (marker) {
-                    marker.setLatLng([lat, lon]);
+                    marker.setLatLng([lat, lon]); // Update marker position
                 } else {
                     marker = L.marker([lat, lon]).addTo(map)
                         .bindPopup('You are here!')
@@ -48,8 +48,8 @@
             }, function(error) {
                 alert('Error occurred. Error code: ' + error.code);
             }, {
-                enableHighAccuracy: true,  // Use GPS if available
-                maximumAge: 0,             // Do not use a cached position
+                enableHighAccuracy: true,  // Use GPS for better accuracy
+                maximumAge: 0,             // Don't use cached position
                 timeout: 5000              // Timeout after 5 seconds
             });
         } else {

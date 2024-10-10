@@ -34,8 +34,8 @@
                 var lat = position.coords.latitude;
                 var lon = position.coords.longitude;
 
-                // Update the map view to the new location
-                map.setView([lat, lon], 13);
+                // Pan the map to the new location without changing the zoom level
+                map.panTo([lat, lon]);
 
                 // If marker already exists, update its position; otherwise, create it
                 if (marker) {
